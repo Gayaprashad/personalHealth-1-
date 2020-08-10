@@ -5,6 +5,8 @@ import  com.example.personalHealth.bpRepository;
 import  com.example.personalHealth.sugar;
 import  com.example.personalHealth.sugarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -63,7 +65,7 @@ public class personalHealthController {
     }
 
     @PostMapping("/set-sugar-all")
-    public String createSugar(@RequestBody sugarUI sugarRecord) throws ParseException {
+    public ResponseEntity<String> createSugar(@RequestBody sugarUI sugarRecord) throws ParseException {
         List <sugar>sugarDatas = sRepository.findAll();
 
         float flag=0;
@@ -77,14 +79,14 @@ public class personalHealthController {
 
         if(flag==0){
             sRepository.save(new sugar(sugarRecord.getRecordDate(),sugarRecord.getMorning(), sugarRecord.getAfternoon(), sugarRecord.getNight()));
-            return "Sugar Record is created";
+            return new ResponseEntity<>("Sugar Record has been created", HttpStatus.CREATED);
         }else {
-            return "A record with the date already exists";
+            return new ResponseEntity<>("A sugar record already exists with the given date", HttpStatus.BAD_REQUEST);
         }
     }
 
     @PostMapping("/set-bp-all")
-    public String createBp(@RequestBody bpUI bpRecord) throws ParseException {
+    public ResponseEntity<String> createBp(@RequestBody bpUI bpRecord) throws ParseException {
         List <bp>bpDatas = repository.findAll();
 
         float flag=0;
@@ -96,9 +98,9 @@ public class personalHealthController {
 
         if(flag==0){
             repository.save(new bp(bpRecord.getRecordDate(),bpRecord.getMorning(), bpRecord.getAfternoon(), bpRecord.getNight()));
-            return "BP Record is created";
+            return new ResponseEntity<>("BP Record has been created", HttpStatus.CREATED);
         }else {
-            return "A record with the date already exists";
+            return new ResponseEntity<>("A BP record already exists with the given date", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -136,6 +138,55 @@ public class personalHealthController {
                 System.out.print("date is being invoked");
             }
             System.out.println(data.getRecordDate()+" "+bpRecord.getrecordDate());
+
+
+        }
+        return "BP Record is modified";
+    }
+
+    @PostMapping("/set-bp-one")
+    public String createBpAngular(@RequestBody bp bpRecord) throws ParseException {
+//        List<bp> bpDatas= repository.findById(bpRecord.getId());
+        Iterable<Long> id= Collections.singleton(bpRecord.getId());
+        List<bp> bpDatas=repository.findAllById(id);
+        for( bp data :bpDatas){
+//            if (data.getRecordDate().compareTo(bpRecord.getRecordDate())==0){
+//                if (bpRecord.getMan().equals("morning")){
+//                    Date tRecordDate= data.getRecordDate();
+//                    String tNight = data.getNight();
+//                    String tAfternoon = data.getAfternoon();
+//                    repository.deleteById(data.getId());
+//                    repository.save(new bp(tRecordDate,bpRecord.getValue(),tAfternoon,tNight));
+//
+//                }else if (bpRecord.getMan().equals("afternoon")){
+//                    Date tRecordDate= data.getRecordDate();
+//                    String tNight = data.getNight();
+//                    String tMorning = data.getMorning();
+//                    repository.deleteById(data.getId());
+//
+//                    repository.save(new bp(tRecordDate,tMorning,bpRecord.getValue() ,tNight));
+//                } else if (bpRecord.getMan().equals("night")){
+//                    Date tRecordDate= data.getRecordDate();
+//                    String tMorning = data.getMorning();
+//                    String tAfternoon = data.getAfternoon();
+//                    repository.deleteById(data.getId());
+//                    repository.save(new bp(tRecordDate,tMorning,tAfternoon,bpRecord.getValue()));
+//                }else{
+//                    System.out.println("Invalid MAN value in the HTTP Request");
+//                    System.out.println(bpRecord.getValue());
+//                    System.out.println(bpRecord.getMan());
+//                }
+//                System.out.print("date is being invoked");
+                Long idL= data.getId();
+                Date recordDate=data.getRecordDate();
+                String morning =data.getMorning();
+                String afternoon =data.getAfternoon();
+                String night =data.getNight();
+                repository.deleteById(idL);
+                repository.save(new bp(idL,bpRecord.getRecordDate(),bpRecord.getMorning(),bpRecord.getAfternoon(),bpRecord.getNight()));
+
+//            }
+//            System.out.println(data.getRecordDate()+" "+bpRecord.getRecordDate());
 
 
         }
