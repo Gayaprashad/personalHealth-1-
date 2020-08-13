@@ -31,6 +31,14 @@ public class sugar {
         this.night = night;
     }
 
+    public sugar(Long id,Date recordDate, String morning, String afternoon, String night){
+        this.id =id;
+        this.recordDate = recordDate;
+        this.morning= morning;
+        this.afternoon= afternoon;
+        this.night = night;
+    }
+
     public Long getId(){
         return this.id;
     }

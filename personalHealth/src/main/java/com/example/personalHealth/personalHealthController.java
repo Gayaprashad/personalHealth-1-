@@ -65,7 +65,8 @@ public class personalHealthController {
     }
 
     @PostMapping("/set-sugar-all")
-    public ResponseEntity<String> createSugar(@RequestBody sugarUI sugarRecord) throws ParseException {
+//    ResponseEntity<String>
+    public void createSugar(@RequestBody sugarUI sugarRecord) throws ParseException {
         List <sugar>sugarDatas = sRepository.findAll();
 
         float flag=0;
@@ -79,14 +80,13 @@ public class personalHealthController {
 
         if(flag==0){
             sRepository.save(new sugar(sugarRecord.getRecordDate(),sugarRecord.getMorning(), sugarRecord.getAfternoon(), sugarRecord.getNight()));
-            return new ResponseEntity<>("Sugar Record has been created", HttpStatus.CREATED);
         }else {
-            return new ResponseEntity<>("A sugar record already exists with the given date", HttpStatus.BAD_REQUEST);
+            // A sugar record with the same date already exists
         }
     }
 
     @PostMapping("/set-bp-all")
-    public ResponseEntity<String> createBp(@RequestBody bpUI bpRecord) throws ParseException {
+    public void createBp(@RequestBody bpUI bpRecord) throws ParseException {
         List <bp>bpDatas = repository.findAll();
 
         float flag=0;
@@ -98,59 +98,17 @@ public class personalHealthController {
 
         if(flag==0){
             repository.save(new bp(bpRecord.getRecordDate(),bpRecord.getMorning(), bpRecord.getAfternoon(), bpRecord.getNight()));
-            return new ResponseEntity<>("BP Record has been created", HttpStatus.CREATED);
         }else {
-            return new ResponseEntity<>("A BP record already exists with the given date", HttpStatus.BAD_REQUEST);
+//            return new ResponseEntity<>("A BP record already exists with the given date", HttpStatus.BAD_REQUEST);
         }
     }
 
-    @PutMapping("/set-bp-one")
-    public String createBp(@RequestBody bpValueUI bpRecord) throws ParseException {
-        List<bp> bpDatas= repository.findAll();
-
-        for( bp data :bpDatas){
-            if (data.getRecordDate().compareTo(bpRecord.getrecordDate())==0){
-                if (bpRecord.getMan().equals("morning")){
-                    Date tRecordDate= data.getRecordDate();
-                    String tNight = data.getNight();
-                    String tAfternoon = data.getAfternoon();
-                    repository.deleteById(data.getId());
-                    repository.save(new bp(tRecordDate,bpRecord.getValue(),tAfternoon,tNight));
-
-                }else if (bpRecord.getMan().equals("afternoon")){
-                    Date tRecordDate= data.getRecordDate();
-                    String tNight = data.getNight();
-                    String tMorning = data.getMorning();
-                    repository.deleteById(data.getId());
-
-                    repository.save(new bp(tRecordDate,tMorning,bpRecord.getValue() ,tNight));
-                } else if (bpRecord.getMan().equals("night")){
-                    Date tRecordDate= data.getRecordDate();
-                    String tMorning = data.getMorning();
-                    String tAfternoon = data.getAfternoon();
-                    repository.deleteById(data.getId());
-                    repository.save(new bp(tRecordDate,tMorning,tAfternoon,bpRecord.getValue()));
-                }else{
-                    System.out.println("Invalid MAN value in the HTTP Request");
-                    System.out.println(bpRecord.getValue());
-                    System.out.println(bpRecord.getMan());
-                }
-                System.out.print("date is being invoked");
-            }
-            System.out.println(data.getRecordDate()+" "+bpRecord.getrecordDate());
-
-
-        }
-        return "BP Record is modified";
-    }
-
-    @PostMapping("/set-bp-one")
-    public String createBpAngular(@RequestBody bp bpRecord) throws ParseException {
-//        List<bp> bpDatas= repository.findById(bpRecord.getId());
-        Iterable<Long> id= Collections.singleton(bpRecord.getId());
-        List<bp> bpDatas=repository.findAllById(id);
-        for( bp data :bpDatas){
-//            if (data.getRecordDate().compareTo(bpRecord.getRecordDate())==0){
+//    @PutMapping("/set-bp-one")
+//    public String createBp(@RequestBody bpValueUI bpRecord) throws ParseException {
+//        List<bp> bpDatas= repository.findAll();
+//
+//        for( bp data :bpDatas){
+//            if (data.getRecordDate().compareTo(bpRecord.getrecordDate())==0){
 //                if (bpRecord.getMan().equals("morning")){
 //                    Date tRecordDate= data.getRecordDate();
 //                    String tNight = data.getNight();
@@ -177,6 +135,19 @@ public class personalHealthController {
 //                    System.out.println(bpRecord.getMan());
 //                }
 //                System.out.print("date is being invoked");
+//            }
+//            System.out.println(data.getRecordDate()+" "+bpRecord.getrecordDate());
+//
+//
+//        }
+//        return "BP Record is modified";
+//    }
+
+    @PostMapping("/set-bp-one")
+    public void createBpAngular(@RequestBody bp bpRecord) throws ParseException {
+        Iterable<Long> id= Collections.singleton(bpRecord.getId());
+        List<bp> bpDatas=repository.findAllById(id);
+        for( bp data :bpDatas){
                 Long idL= data.getId();
                 Date recordDate=data.getRecordDate();
                 String morning =data.getMorning();
@@ -184,63 +155,70 @@ public class personalHealthController {
                 String night =data.getNight();
                 repository.deleteById(idL);
                 repository.save(new bp(idL,bpRecord.getRecordDate(),bpRecord.getMorning(),bpRecord.getAfternoon(),bpRecord.getNight()));
-
-//            }
-//            System.out.println(data.getRecordDate()+" "+bpRecord.getRecordDate());
-
-
         }
-        return "BP Record is modified";
     }
 
-    @PutMapping("/set-sugar-one")
-    public String createSugar(@RequestBody sugarValueUI sugarRecord) throws ParseException {
-        List<sugar> sugarDatas= sRepository.findAll();
+//    @PutMapping("/set-sugar-one")
+//    public String createSugar(@RequestBody sugarValueUI sugarRecord) throws ParseException {
+//        List<sugar> sugarDatas= sRepository.findAll();
+//
+//        for( sugar data :sugarDatas){
+//            if (data.getRecordDate().compareTo(sugarRecord.getrecordDate())==0){
+//                if (sugarRecord.getMan().equals("morning")){
+//                    Date tRecordDate= data.getRecordDate();
+//                    String tNight = data.getNight();
+//                    String tAfternoon = data.getAfternoon();
+//                    sRepository.deleteById(data.getId());
+//                    sRepository.save(new sugar(tRecordDate,sugarRecord.getValue(),tAfternoon,tNight));
+//
+//                }else if (sugarRecord.getMan().equals("afternoon")){
+//                    Date tRecordDate= data.getRecordDate();
+//                    String tNight = data.getNight();
+//                    String tMorning = data.getMorning();
+//                    sRepository.deleteById(data.getId());
+//
+//                    sRepository.save(new sugar(tRecordDate,tMorning,sugarRecord.getValue() ,tNight));
+//                } else if (sugarRecord.getMan().equals("night")){
+//                    Date tRecordDate= data.getRecordDate();
+//                    String tMorning = data.getMorning();
+//                    String tAfternoon = data.getAfternoon();
+//                    sRepository.deleteById(data.getId());
+//                    sRepository.save(new sugar(tRecordDate,tMorning,tAfternoon,sugarRecord.getValue()));
+//                }else{
+//                    System.out.println("Invalid MAN value in the HTTP Request");
+//                    System.out.println(sugarRecord.getValue());
+//                    System.out.println(sugarRecord.getMan());
+//                }
+//                System.out.print("date is being invoked");
+//            }
+//            System.out.println(data.getRecordDate()+" "+sugarRecord.getrecordDate());
+//        }
+//        return "Sugar Record is modified";
+//    }
 
+    @PostMapping("/set-sugar-one")
+    public void createSugarAngular(@RequestBody sugar sugarRecord) throws ParseException {
+        Iterable<Long> id= Collections.singleton(sugarRecord.getId());
+        List<sugar> sugarDatas=sRepository.findAllById(id);
         for( sugar data :sugarDatas){
-            if (data.getRecordDate().compareTo(sugarRecord.getrecordDate())==0){
-                if (sugarRecord.getMan().equals("morning")){
-                    Date tRecordDate= data.getRecordDate();
-                    String tNight = data.getNight();
-                    String tAfternoon = data.getAfternoon();
-                    sRepository.deleteById(data.getId());
-                    sRepository.save(new sugar(tRecordDate,sugarRecord.getValue(),tAfternoon,tNight));
-
-                }else if (sugarRecord.getMan().equals("afternoon")){
-                    Date tRecordDate= data.getRecordDate();
-                    String tNight = data.getNight();
-                    String tMorning = data.getMorning();
-                    sRepository.deleteById(data.getId());
-
-                    sRepository.save(new sugar(tRecordDate,tMorning,sugarRecord.getValue() ,tNight));
-                } else if (sugarRecord.getMan().equals("night")){
-                    Date tRecordDate= data.getRecordDate();
-                    String tMorning = data.getMorning();
-                    String tAfternoon = data.getAfternoon();
-                    sRepository.deleteById(data.getId());
-                    sRepository.save(new sugar(tRecordDate,tMorning,tAfternoon,sugarRecord.getValue()));
-                }else{
-                    System.out.println("Invalid MAN value in the HTTP Request");
-                    System.out.println(sugarRecord.getValue());
-                    System.out.println(sugarRecord.getMan());
-                }
-                System.out.print("date is being invoked");
-            }
-            System.out.println(data.getRecordDate()+" "+sugarRecord.getrecordDate());
+            Long idL= data.getId();
+            Date recordDate=data.getRecordDate();
+            String morning =data.getMorning();
+            String afternoon =data.getAfternoon();
+            String night =data.getNight();
+            sRepository.deleteById(idL);
+            sRepository.save(new sugar(idL,sugarRecord.getRecordDate(),sugarRecord.getMorning(),sugarRecord.getAfternoon(),sugarRecord.getNight()));
         }
-        return "Sugar Record is modified";
     }
 
     @DeleteMapping("/delete-bp")
-    public String deleteByBpId(@RequestParam Long id){
+    public void deleteByBpId(@RequestParam Long id){
         repository.deleteById(id);
-        return "Element with id "+id+" has been deleted";
     }
 
     @DeleteMapping("/delete-sugar")
-    public String deleteBySugarId(@RequestParam Long id){
+    public void deleteBySugarId(@RequestParam Long id){
         sRepository.deleteById(id);
-        return "Element with id "+id+" has been deleted";
     }
 }
 
